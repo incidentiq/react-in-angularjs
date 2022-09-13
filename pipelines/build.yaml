@@ -13,4 +13,5 @@ stages:
                 
           - task: Npm@1
             inputs:
-              command: 'run build'
+              command: 'custom'
+              customCommand: 'run build'
