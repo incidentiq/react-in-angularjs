@@ -1,4 +1,7 @@
-name: react-in-angular-$(variables['packVer'])
+name: react-in-angular-$(packVer)
+
+variables:
+  packVer: 'init'
 
 stages:
   - stage: Build
