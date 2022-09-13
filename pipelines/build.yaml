@@ -6,9 +6,11 @@ stages:
       - job: 
         steps:
           - checkout: self
+
           - task: Npm@1
-              inputs:
-                command: 'ci'
+            inputs:
+              command: 'ci'
+                
           - task: Npm@1
-              inputs:
-                command: 'run build'
+            inputs:
+              command: 'run build'
