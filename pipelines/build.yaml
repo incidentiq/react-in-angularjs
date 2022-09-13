@@ -33,7 +33,7 @@ stages:
             inputs:
               command: 'custom'
               ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-                customCommand: 'publish --dryrun'
+                customCommand: 'publish --dryrun --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
               ${{ else }}:
-                customCommand: 'publish --dryrun --tag beta'
+                customCommand: 'publish --dryrun --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
   
