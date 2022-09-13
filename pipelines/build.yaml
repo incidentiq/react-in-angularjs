@@ -1,4 +1,4 @@
-name: react-in-angular-$(Build.BuildNumber)
+name: react-in-angular
 
 variables:
   packVer: 'init'
