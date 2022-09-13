@@ -16,7 +16,7 @@ stages:
          
           - script: |
               $version=$(cat package.json | jq -r .version)
-              echo "##vso[build.updatebuildnumber;]$version"
+              echo "##vso[build.updatebuildnumber]$version"
 
           - task: Npm@1
             inputs:
