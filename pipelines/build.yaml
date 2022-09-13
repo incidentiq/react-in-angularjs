@@ -1,4 +1,4 @@
-name: react-in-angular-$(packVer)
+name: react-in-angular-$(Build.BuildNumber)
 
 variables:
   packVer: 'init'
@@ -16,7 +16,7 @@ stages:
          
           - script: |
               $version=$(cat package.json | jq -r .version)
-              echo "##vso[task.setvariable variable=packVer;]$version"
+              echo "##vso[build.updatebuildnumber;]$version"
 
           - task: Npm@1
             inputs:
