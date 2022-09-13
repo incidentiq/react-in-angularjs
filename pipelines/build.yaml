@@ -29,6 +29,11 @@ stages:
               command: 'custom'
               customCommand: 'run build'
 
+          - task: npmAuthenticate@0
+            inputs:
+              workingFile: '.npmrc'
+            displayName: npm authenticate
+
           - task: Npm@1
             inputs:
               command: 'custom'
