@@ -3,6 +3,12 @@ name: react-in-angular
 variables:
   packVer: 'init'
 
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+
 stages:
   - stage: Build
     jobs:
@@ -22,3 +28,12 @@ stages:
             inputs:
               command: 'custom'
               customCommand: 'run build'
+
+          - task: Npm@1
+            inputs:
+              command: 'custom'
+              ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+                customCommand: 'publish --dryrun'
+              ${{ else }}:
+                customCommand: 'publish --dryrun --tag beta'
+  
