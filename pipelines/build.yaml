@@ -23,7 +23,8 @@ stages:
           - script: |
               version=$(cat package.json | jq -r .version)
               echo "##vso[build.updatebuildnumber]$version"
-              touch .npmrc
+              echo @incidentiq:registry=https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/ > .npmrc
+            displayName: set private registry
 
           - task: Npm@1
             inputs:
