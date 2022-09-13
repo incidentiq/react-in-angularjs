@@ -23,6 +23,7 @@ stages:
           - script: |
               version=$(cat package.json | jq -r .version)
               echo "##vso[build.updatebuildnumber]$version"
+              touch .npmrc
 
           - task: Npm@1
             inputs:
