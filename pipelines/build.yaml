@@ -26,6 +26,11 @@ stages:
               echo @incidentiq:registry=https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/ > .npmrc
             displayName: set private registry
 
+          - script: |
+              npm version $(Build.BuildNumber)-beta.$[counter($(Build.BuildNumber), 1)]
+            condition: eq(variables['Build.SourceBranchName'], 'develop')
+            displayName: Update beta version
+
           - task: Npm@1
             inputs:
               command: 'custom'
@@ -40,7 +45,7 @@ stages:
             inputs:
               command: 'custom'
               ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-                customCommand: 'publish --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+                customCommand: 'publish --dryrun --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
               ${{ else }}:
-                customCommand: 'publish --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+                customCommand: 'publish --dryrun --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
   
