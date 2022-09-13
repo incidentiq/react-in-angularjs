@@ -27,7 +27,7 @@ stages:
             displayName: set private registry
 
           - script: |
-              npm version $(Build.BuildNumber)-beta.$[counter($(Build.BuildNumber), 1)]
+              npm version $(Build.BuildNumber)-beta.$[counter('$(Build.BuildNumber)'', 1)]
             condition: eq(variables['Build.SourceBranchName'], 'develop')
             displayName: Update beta version
 
