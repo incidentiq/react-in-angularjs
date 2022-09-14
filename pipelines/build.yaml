@@ -33,6 +33,7 @@ stages:
           - download: current
           
           - task: Npm@1
+            displayName: Clean install
             inputs:
               command: 'ci'
               workingDir: $(Agent.BuildDirectory)/source
@@ -48,6 +49,7 @@ stages:
             workingDirectory: $(Agent.BuildDirectory)/source
             
           - task: Npm@1
+            displayName: Build
             inputs:
               command: 'custom'
               customCommand: 'run build'
@@ -59,11 +61,12 @@ stages:
             displayName: npm authenticate
 
           - task: Npm@1
+            displayName: Publish
             inputs:
               workingDir: $(Agent.BuildDirectory)/source
               command: 'custom'
               ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
-                customCommand: 'publish --dryrun --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+                customCommand: 'publish --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
               ${{ else }}:
-                customCommand: 'publish --dryrun --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+                customCommand: 'publish --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
   
