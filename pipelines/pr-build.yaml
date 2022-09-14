@@ -1,0 +1,30 @@
+name: react-in-angular
+
+pr: 
+  branches:
+    include:
+      - develop
+      
+
+variables:
+  packVer: 'init'
+
+trigger: none
+
+stages:
+  - stage: Build
+    jobs:
+      - job: build
+        steps:
+          - checkout: self
+
+          - task: Npm@1
+            displayName: Clean install
+            inputs:
+              command: 'ci'
+
+          - task: Npm@1
+            displayName: Build
+            inputs:
+              command: 'custom'
+              customCommand: 'run build'

@@ -1,5 +1,7 @@
 name: react-in-angular
 
+pr: none
+
 variables:
   packVer: 'init'
 
