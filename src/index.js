@@ -2,6 +2,7 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const isPlainObject = require("lodash/isPlainObject");
 const isEqual = require("lodash/isEqual");
+import { createRoot } from 'react-dom/client';
 
 function angularize(Component, componentName, angularApp, bindings) {
   bindings = bindings || {};
@@ -45,8 +46,16 @@ function angularize(Component, componentName, angularApp, bindings) {
           };
         }
 
+        this.$onDestroy = () => {
+          this.reactRoot.unmount();
+        };
+
         this.$onChanges = () => {
-          ReactDOM.render(React.createElement(Component, this), $element[0]);
+          if( !this.reactRoot) {
+            this.reactRoot = createRoot($element[0]);
+          }
+          
+          this.reactRoot.render(React.createElement(Component, this ));
         };
       },
     ],

@@ -1,0 +1,72 @@
+name: react-in-angular
+
+variables:
+  packVer: 'init'
+
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+
+stages:
+  - stage: Build
+    jobs:
+      - job: build
+        steps:
+          - checkout: self
+
+          - script: |
+              version=$(cat package.json | jq -r .version)
+              echo "##vso[build.updatebuildnumber]$version"
+            displayName: update build number
+            
+          - publish: .
+            artifact: source
+
+      - job: publish
+        dependsOn: build
+        variables:
+          beta: $[counter('$(Build.BuildNumber)', 1)]
+        steps:
+          - checkout: none
+          - download: current
+          
+          - task: Npm@1
+            displayName: Clean install
+            inputs:
+              command: 'ci'
+              workingDir: $(Agent.BuildDirectory)/source
+
+          - script: |
+              echo @incidentiq:registry=https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/ > .npmrc
+            displayName: Set private registry
+            workingDirectory: $(Agent.BuildDirectory)/source
+
+          - script: npm version $(Build.BuildNumber)-beta.$(beta)
+            condition: ne(variables['Build.SourceBranchName'], 'master')
+            displayName: Update beta version
+            workingDirectory: $(Agent.BuildDirectory)/source
+            
+          - task: Npm@1
+            displayName: Build
+            inputs:
+              command: 'custom'
+              customCommand: 'run build'
+              workingDir: $(Agent.BuildDirectory)/source
+
+          - task: npmAuthenticate@0
+            inputs:
+              workingFile: '$(Agent.BuildDirectory)/source/.npmrc'
+            displayName: npm authenticate
+
+          - task: Npm@1
+            displayName: Publish
+            inputs:
+              workingDir: $(Agent.BuildDirectory)/source
+              command: 'custom'
+              ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+                customCommand: 'publish --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+              ${{ else }}:
+                customCommand: 'publish --tag beta --registry https://pkgs.dev.azure.com/incidentiq/IIQ/_packaging/iiq-artifacts/npm/registry/'
+  
