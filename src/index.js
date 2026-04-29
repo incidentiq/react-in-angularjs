@@ -1,8 +1,7 @@
 const React = require("react");
-const ReactDOM = require("react-dom");
+const { createRoot } = require("react-dom/client");
 const isPlainObject = require("lodash/isPlainObject");
 const isEqual = require("lodash/isEqual");
-import { createRoot } from 'react-dom/client';
 
 function angularize(Component, componentName, angularApp, bindings) {
   bindings = bindings || {};
@@ -72,13 +71,11 @@ function angularizeDirective(Component, directiveName, angularApp, bindings) {
       scope: bindings,
       replace: true,
       link: function (scope, element) {
-        // Add $scope
         scope.$scope = scope;
 
-        // First render - needed?
-        ReactDOM.render(React.createElement(Component, scope), element[0]);
+        const reactRoot = createRoot(element[0]);
+        reactRoot.render(React.createElement(Component, scope));
 
-        // Watch for any changes in bindings, then rerender
         const keys = [];
         for (let bindingKey of Object.keys(bindings)) {
           if (/^data[A-Z]/.test(bindingKey)) {
@@ -92,7 +89,11 @@ function angularizeDirective(Component, directiveName, angularApp, bindings) {
         }
 
         scope.$watchGroup(keys, () => {
-          ReactDOM.render(React.createElement(Component, scope), element[0]);
+          reactRoot.render(React.createElement(Component, scope));
+        });
+
+        scope.$on("$destroy", () => {
+          reactRoot.unmount();
         });
       },
     };
